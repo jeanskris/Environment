@@ -11,4 +11,5 @@ public class RedisService implements IRedisService {
         Long timestamp = System.currentTimeMillis();
         return timestamp.toString();
     }
+
 }

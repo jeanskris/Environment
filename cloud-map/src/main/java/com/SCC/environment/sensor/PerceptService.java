@@ -1,9 +1,13 @@
 package com.SCC.environment.sensor;
 
+import com.SCC.environment.dao.MapDao;
 import com.SCC.environment.model.Coordinate;
+import com.SCC.environment.model.Map;
+import com.SCC.environment.service.RedisService;
 import org.opencv.core.*;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.DataInputStream;
@@ -17,13 +21,16 @@ import java.util.Scanner;
  */
 @Service("perceptService")
 public class PerceptService {
+    @Autowired
+    MapDao mapDao;
+    @Autowired
+    RedisService redisService;
 
-
-    public Map getMapByOpencv(){
+    public void getMapByOpencv(){
         Map map=new Map();
         String path = "D:\\ProgrammingSoftware\\opencv\\opencv\\build\\java\\x64\\opencv_java310.dll";
         System.load(path);
-        Mat image = Imgcodecs.imread("D:\\Program\\AutoPark\\park-sensor\\src\\main\\resources\\mylab-001.pgm");
+        Mat image = Imgcodecs.imread("D:\\Program\\Environment\\cloud-map\\src\\main\\resources\\mylab-002.pgm");
         Mat image32s= new Mat();
         Imgproc.threshold(image,image32s,5,255,Imgproc.THRESH_BINARY);//white and black, so that no lines out the Contour
         Imgcodecs.imwrite("threshold.png", image32s); // DEBUG
@@ -62,12 +69,12 @@ public class PerceptService {
         }
         map.setMappingX(leftX-20-(leftX-(int)leftX));//由矩形框产生的误差也要算入坐标转换  避免精度丢失
         map.setMappingY(leftY-20-(leftY-(int)leftY));
-        System.out.println(leftX +","+ leftY);
-        System.out.println(rightX +","+ rightY);
+        /*System.out.println(leftX +","+ leftY);
+        System.out.println(rightX +","+ rightY);*/
 
         Rect recMain=new Rect((int)leftX-20,(int)leftY-20,(int)(rightX-leftX),(int)(rightY-leftY));
         Mat result = image32s.submat(recMain);
-        Imgcodecs.imwrite("result.png", result);
+        Imgcodecs.imwrite("D:\\Program\\Environment\\cloud-map\\result.png", result);
         List<Coordinate> newPoints=new ArrayList<Coordinate>();
 
         for (Point p : points) {
@@ -75,9 +82,10 @@ public class PerceptService {
             p.y=p.y-map.getMappingY();
             newPoints.add( new Coordinate(p.x,p.y));
         }
-        System.out.println(map.getMappingX()+"y:" +map.getMappingY());
+        System.out.println("getMapByOpencv x:"+map.getMappingX()+"y:" +map.getMappingY());
         map.setPoints(newPoints);
-        return  map;
+        map.setId(1);
+        mapDao.save(map);
     }
 
     //get map points without opencv

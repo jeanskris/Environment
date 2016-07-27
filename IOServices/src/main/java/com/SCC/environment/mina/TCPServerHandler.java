@@ -1,13 +1,19 @@
 package com.SCC.environment.mina;
 
 
+import com.SCC.environment.dao.MapDao;
+import com.SCC.environment.dao.RedisDao;
 import com.SCC.environment.model.Constant;
+import com.SCC.environment.model.Coordinate;
+import com.SCC.environment.model.Map;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
+import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.InetSocketAddress;
@@ -16,7 +22,10 @@ import java.net.InetSocketAddress;
 public class TCPServerHandler extends IoHandlerAdapter {
     private static Logger logger = LoggerFactory.getLogger(TCPServerHandler.class);
 
-
+    @Autowired
+    RedisDao redisDao;
+    @Autowired
+    MapDao mapDao;
     @Override
     public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
         cause.printStackTrace();
@@ -25,8 +34,9 @@ public class TCPServerHandler extends IoHandlerAdapter {
 
     @Override
     public void messageReceived(IoSession session, Object message) throws Exception {
-        System.out.println("data from client:"+message);
-    /*    String clientIP = (String)session.getAttribute("KEY_SESSION_CLIENT_IP");
+
+
+          /*String clientIP = (String)session.getAttribute("KEY_SESSION_CLIENT_IP");
         logger.debug(" messageReceived,client IP: " + clientIP);
         System.out.println("messageReceived,client IP:"+clientIP);*/
         if (message instanceof IoBuffer) {
@@ -36,6 +46,15 @@ public class TCPServerHandler extends IoHandlerAdapter {
             buffer.setAutoExpand(true);
             byte[] bytes = new byte[buffer.limit()];
             buffer.get(bytes);
+            JSONArray json = new JSONArray(new String(bytes));
+            System.out.println("data from client:"+json.get(2));
+            double x=Double.parseDouble(json.get(1).toString());
+            double y=Double.parseDouble(json.get(2).toString());
+            System.out.println("x:"+x+"  y:"+y);
+            Map map=mapDao.read(1);
+            Coordinate coordinate=new Coordinate(x-map.getMappingX(),y-map.getMappingY());
+            redisDao.save("currentCoordinate",coordinate);
+
            // carService.getDataFromCar(bytes); //调用service业务处理
         }
     }

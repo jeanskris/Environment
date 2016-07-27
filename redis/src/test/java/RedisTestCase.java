@@ -30,4 +30,9 @@ public class RedisTestCase {
     public void getMap() throws InterruptedException{
         System.out.println("map：" + mapDao.read(1).getMappingX());
     }
+    @Test
+    public void deleteMap() throws InterruptedException{
+        mapDao.delete(1);
+        System.out.println("map：delete"  );
+    }
 }

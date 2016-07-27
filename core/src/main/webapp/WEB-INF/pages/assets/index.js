@@ -60,14 +60,13 @@ function selectMap(e)
             map = eval(data);//parse json to object  ==val 解析json==
             var json = JSON.stringify(data);
             console.log("map.points.length:"+map.points.length);
-            console.log(json);
+            //console.log(json);
             var point;
             for ( var i=0;i<map.points.length;i=i+2){
                 //console.log("point.x:"+map.points[i].x+"; point.y:"+map.points[i].y);
-                drawPixel(map.points[i].x , map.points[i].y , 0, 0,0, 255);
-                ctx.putImageData(canvasData, map.points[i].x , map.points[i].y );
+                putDateCanvas(canvasData,map.points[i].x,map.points[i].y, 0, 0,0, 255);
             }
-
+            updateInterval();//页面启动就开始轮询更新位置
         },
         error: function () {
             console.log("error2");
@@ -83,8 +82,7 @@ function doMouseDown(event) {
     var y = event.pageY;
     var canvas = event.target;
     var loc = getPointOnCanvas(canvas, x, y);
-    drawPixel(loc.x,loc.y, 255, 0,0, 255);
-    ctx.putImageData(canvasData,loc.x,loc.y);
+    putDateCanvas(canvasData,loc.x,loc.y,0,255,0,255);
     $.ajax("mouseClickPoint", {
         type: "POST",
         contentType : "application/json;charset=UTF-8",
@@ -105,6 +103,35 @@ function getPointOnCanvas(canvas, x, y) {
         y: y - canvas.offsetTop+0.01
     };
 }
+
+ var intervalUpdatePosition;
+ function updateInterval(){
+ intervalUpdatePosition=setInterval(function() {//后面每次更新数据
+         getCurrentPosition();
+ },
+ 1000);
+ }
+function getCurrentPosition() {
+    $.ajax("getCurrentPosition", {
+        type: "GET",
+        dataType: "json",
+        success: function (data) {
+            var coordinate = eval(data);//parse json to object  ==val 解析json==
+            console.log(JSON.stringify(data));
+            // ctx.putImageData(canvasData, coordinate.x, coordinate.y);
+            ctx.fillStyle = "rgba("+255+","+0+","+0+","+255+")";
+            ctx.fillRect( coordinate.x, coordinate.y,2,2 );
+        },
+        error: function () {
+            clearInterval(intervalUpdatePosition);//cannot get data, stop read
+            console.log("update");
+            /*  marker.center=[${carInfo.gpsLongitude},${carInfo.gpsLattude}];*/
+        }
+
+    });
+}
+
+
 //=======================draw map==============================
 //canvas1
 var c ;
@@ -132,19 +159,15 @@ $(document).ready(function () {
 
 });
 // That's how you define the value of a pixel //
-function drawPixel (x, y, r, g, b, a) {
-    //var index = (x + y * canvasWidth) * 4;//网上的  这样会有重叠现象
-    var index = 0;
-    canvasData.data[index + 0] = r;
-    canvasData.data[index + 1] = g;
-    canvasData.data[index + 2] = b;
-    canvasData.data[index + 3] = a;
-}
-
-// That's how you update the canvas, so that your //
-// modification are taken in consideration //
-function updateCanvas() {
-    ctx.putImageData(canvasData, 0, 0);
+function putDateCanvas(canData,x,y,r, g, b, a) {
+    for (var i=0;i<canData.data.length;i+=4)
+    {
+        canData.data[i+0]=r;
+        canData.data[i+1]=g;
+        canData.data[i+2]=b;
+        canData.data[i+3]=a;
+    }
+    ctx.putImageData(canData, x, y);
 }
 
 /*绘制测试地图*/
@@ -280,6 +303,7 @@ function updateBall( x, y){
 
     ball.draw();
 }
+
 /*
 var intervalUpdate;
 updateInterval();//页面启动就开始轮询更新位置

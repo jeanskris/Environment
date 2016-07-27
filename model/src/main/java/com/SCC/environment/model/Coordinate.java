@@ -1,9 +1,14 @@
 package com.SCC.environment.model;
 
+import org.springframework.stereotype.Repository;
+
+import java.io.Serializable;
+
 /**
  * Created by ZJDX on 2016/6/20.
  */
-public class Coordinate {
+@Repository
+public class Coordinate implements Serializable {
     private double x;
     private double y;
     public Coordinate(){

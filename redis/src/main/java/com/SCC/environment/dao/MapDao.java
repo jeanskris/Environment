@@ -1,6 +1,8 @@
 package com.SCC.environment.dao;
 
 import com.SCC.environment.model.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -12,6 +14,8 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class MapDao {
+    private static Logger logger = LoggerFactory.getLogger(MapDao.class);
+
     @Autowired
     private RedisTemplate<String,Map> redisTemplate;
 
@@ -25,7 +29,9 @@ public class MapDao {
 
     public Map read(int id) {
         ValueOperations<String, Map> valueOper = redisTemplate.opsForValue();
-        return valueOper.get(String.valueOf(id));
+        Map map=valueOper.get(String.valueOf(id));
+        logger.info("read:"+map.getId());
+        return map;
     }
 
     public void delete(int id) {

@@ -1,9 +1,11 @@
 package com.SCC.environment.model;
 
+import java.io.Serializable;
+
 /**
  * Created by ZJDX on 2016/6/20.
  */
-public class PointInfo {
+public class PointInfo implements Serializable {
 
     private Coordinate coordinate;
     private int speed;

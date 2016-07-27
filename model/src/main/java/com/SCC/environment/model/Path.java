@@ -1,10 +1,12 @@
 package com.SCC.environment.model;
 
+import java.io.Serializable;
+
 /**
  * Created by ZJDX on 2016/6/20.
  */
 
-public class Path {
+public class Path implements Serializable {
     private Coordinate startPoint;
     private Coordinate endPoint;
 

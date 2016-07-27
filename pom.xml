@@ -16,11 +16,13 @@
         <module>smart-TMS</module>
         <module>IOServices</module>
         <module>model</module>
+        <module>redis</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>4.2.5.RELEASE</spring.version>
-        <jackson-core.version>2.5.4</jackson-core.version>
+        <jackson-core.version>2.5.0</jackson-core.version>
+        <tomcat.ws.version>9.0.0.M4</tomcat.ws.version>
     </properties>
     <dependencies>
         <dependency>
@@ -33,7 +35,6 @@
             <artifactId>spring-context</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
 
         <dependency>
             <groupId>org.springframework</groupId>
@@ -61,7 +62,7 @@
             <version>${spring.version}</version>
         </dependency>
         <!--activeMQ-->
-        <dependency>
+        <!--<dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jms</artifactId>
             <version>${spring.version}</version>
@@ -71,7 +72,7 @@
             <artifactId>activemq-core</artifactId>
             <version>5.7.0</version>
         </dependency>
-
+-->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
@@ -83,25 +84,17 @@
             <version>${jackson-core.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.4.1</version>
-            <scope>test</scope>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson-core.version}</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20080701</version>
-            <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjrt</artifactId>
-            <version>1.7.3</version>
-        </dependency>
-
-
+        <!-- Logging -->
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
@@ -169,6 +162,17 @@
             <groupId>cglib</groupId>
             <artifactId>cglib</artifactId>
             <version>2.2</version>
+        </dependency>
+        <!--redis-->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-redis</artifactId>
+            <version>1.6.1.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>2.7.3</version>
         </dependency>
     </dependencies>
 </project>
