@@ -1,6 +1,6 @@
 package com.SCC.environment.sensor;
 
-import com.SCC.environment.dao.MapDao;
+import com.SCC.environment.dao.RedisDao;
 import com.SCC.environment.model.Coordinate;
 import com.SCC.environment.model.Map;
 import com.SCC.environment.service.RedisService;
@@ -22,7 +22,7 @@ import java.util.Scanner;
 @Service("perceptService")
 public class PerceptService {
     @Autowired
-    MapDao mapDao;
+    RedisDao redisDao;
     @Autowired
     RedisService redisService;
 
@@ -85,7 +85,7 @@ public class PerceptService {
         System.out.println("getMapByOpencv x:"+map.getMappingX()+"y:" +map.getMappingY());
         map.setPoints(newPoints);
         map.setId(1);
-        mapDao.save(map);
+        redisDao.save("mapId:"+map.getId(),map);
     }
 
     //get map points without opencv
